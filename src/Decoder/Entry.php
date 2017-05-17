@@ -35,7 +35,7 @@ class Entry
                 $this->entryTransactionDetailDecoder->addReturnInformation($detail, $xmlDetail);
                 $this->entryTransactionDetailDecoder->addAdditionalTransactionInformation($detail, $xmlDetail);
                 $this->entryTransactionDetailDecoder->addBankTransactionCode($detail, $xmlDetail);
-                $this->entryTransactionDetailDecoder->addAmountDetails($detail, $xmlDetail, $xmlEntry->CdtDbtInd);
+                $this->entryTransactionDetailDecoder->addAmountDetails($detail, $xmlDetail, $xmlEntry->CdtDbtInd, $entry->getAmount()->getCurrency());
 
                 $entry->addTransactionDetail($detail);
             }

@@ -210,12 +210,13 @@ abstract class EntryTransactionDetail
 
     /**
      * @param DTO\EntryTransactionDetail $detail
-     * @param SimpleXMLElement           $xmlDetail
-     * @param SimpleXMLElement           $CdtDbtInd
+     * @param SimpleXMLElement $xmlDetail
+     * @param SimpleXMLElement $CdtDbtInd
+     * @param Currency $currency
      */
-    public function addAmountDetails(DTO\EntryTransactionDetail $detail, SimpleXMLElement $xmlDetail, $CdtDbtInd)
+    public function addAmountDetails(DTO\EntryTransactionDetail $detail, SimpleXMLElement $xmlDetail, $CdtDbtInd, Currency $currency)
     {
-        if (isset($xmlDetail->AmtDtls)) {
+        if (isset($xmlDetail->AmtDtls) || isset($xmlDetail->Amt)) {
             $amountDetails = new DTO\AmountDetails();
 
             if (isset($xmlDetail->AmtDtls->TxAmt) && isset($xmlDetail->AmtDtls->TxAmt->Amt)) {
@@ -228,6 +229,17 @@ abstract class EntryTransactionDetail
                 $money = new Money(
                     $amount,
                     new Currency((string) $xmlDetail->AmtDtls->TxAmt->Amt['Ccy'])
+                );
+                $amountDetails->setAmount($money);
+            } elseif ($xmlDetail->Amt) {
+                $amount = StringToUnits::convert((string) $xmlDetail->Amt);
+
+                if ((string) $CdtDbtInd === 'DBIT') {
+                    $amount = $amount * -1;
+                }
+                $money = new Money(
+                    $amount,
+                    $currency
                 );
                 $amountDetails->setAmount($money);
             }
